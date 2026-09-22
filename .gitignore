@@ -37,19 +37,19 @@ Files/
 RUN-LOCALLY.md
 
 # Documentation files (per user request)
-docs/01-PRD.md
-docs/02-TRD.md
-docs/03-Architecture.md
-docs/04-High-Level-Diagram.md
-docs/05-Low-Level-Diagram.md
-docs/06-Request-Flow.md
-docs/07-Database-Schema.md
-docs/07-Memory.md
-docs/08-Phases.md
-docs/09-Scratchpad.md
-docs/10-Reference.md
-docs/11-Checklist.md
-docs/12-Fast-Lookup.md
-docs/13-Demo-Script.md
-docs/14-Submission-Plan.md
-docs/15-Run-Guide.md
+docs/PRD.md
+docs/TRD.md
+docs/Architecture.md
+docs/High-Level-Diagram.md
+docs/Low-Level-Diagram.md
+docs/Request-Flow.md
+docs/Database-Schema.md
+docs/Memory.md
+docs/Phases.md
+docs/Scratchpad.md
+docs/Reference.md
+docs/Checklist.md
+docs/Fast-Lookup.md
+docs/Demo-Script.md
+docs/Submission-Plan.md
+docs/Run-Guide.md
