@@ -70,10 +70,26 @@ Screenshots from this run are in `docs/evidence/` (gitignored).
 
 ## 5. Not verified here (honest scope)
 
-1. **Live model path.** No `LLM_API_KEY` was available, so the real Gemini call was not exercised. The
-   layer is tested with `MOCK_LLM=1` and with stubbed replies that return a fabricated timestamp, which
-   is the behaviour that mattered to prove (rejection and fallback).
+1. **The successful live model call.** No valid `LLM_API_KEY` was available (`.env` was empty and no
+   key was set in the environment), so the branch where the provider returns prose with citations was
+   not exercised. Everything else on that path was verified with a placeholder key - see section 6.
 2. **"Reload samples" button click.** The endpoint it calls is covered by
    `test_ingest_reloads_bundled_samples` and was verified live; the 5-line UI handler was not clicked in
    this pass.
-3. **Recording the demo video and pushing the repo** are manual steps (see `13-Demo-Script.md`).
+3. **Recording the demo video and pushing the repo** are manual steps (the demo script lives in
+   `docs/docs-extra/`, a local working note not shipped in this repo).
+
+## 6. Model path verification, second pass (2026-09-22)
+
+Run after adding `.env` support so that plain `uvicorn app.main:app` picks the file up.
+
+| Check | Result |
+|---|---|
+| `.env` is read without the `--env-file` flag (placeholder key) | startup log `answer mode: gemini-2.0-flash`; `GET /api/health` -> `llm_available: true` |
+| Real outbound HTTPS request to the provider | **PASS** - the provider answered `400 Please pass a valid API key`, i.e. the request left the machine and was understood |
+| Behaviour on a rejected key | `POST /api/ask` returned in ~2s with `provider: lexical`, the 3 expected citations, and `note: model unavailable: provider returned 400 ...` - no retry on a permanent 4xx, no failed request, no fabricated prose |
+| Behaviour with the key removed | startup log `answer mode: verbatim evidence only (no LLM_API_KEY in .env)`; healthy response with `llm_available: false` |
+| `.env` cannot leak into the test suite | `pytest -q` -> **66 passed** both with an empty `.env` and with a key present in it; `tests/conftest.py` clears the key for every test |
+| Precedence | a real environment variable overrides `.env` (verified directly against `llm.config()`) |
+
+Still open: one run with a valid key to see generated summary prose and a real citation-guarded answer.

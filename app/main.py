@@ -77,6 +77,11 @@ store = Store()
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa: ARG001
     store.load()
+    # Say which answer mode is live. Without this line an empty .env looks like a broken model call.
+    log.info(
+        "answer mode: %s",
+        llm.provider_name() if llm.available() else "verbatim evidence only (no LLM_API_KEY in .env)",
+    )
     yield
 
 
@@ -157,12 +162,20 @@ async def ingest(file: UploadFile | None = File(default=None)):
 
 @app.get("/api/guide-answers")
 def guide_answers(use_llm: bool = True):
-    """Every guide question, answered per expert, with verbatim quotes and timestamps."""
+    """Every guide question, answered per expert, with verbatim quotes and timestamps.
+
+    Per-quote extraction is always deterministic; only the cross-expert prose summary is optional.
+    So the guide stays accurate and instant with the model switched off.
+    """
     store.require_loaded()
     questions = analyze.guide_answers(store.transcripts, store.guide)
     out = []
     for q in questions:
-        summary = llm.summarize_question(q, q["answers"]) if use_llm else {"summary": "", "provider": "lexical", "citations": []}
+        summary = (
+            llm.summarize_question(q, q["answers"])
+            if use_llm
+            else {"summary": "", "provider": "lexical", "citations": []}
+        )
         out.append(
             {
                 "id": q["id"],
@@ -174,7 +187,8 @@ def guide_answers(use_llm: bool = True):
                 "answers": q["answers"],
             }
         )
-    return {"questions": out, "provider": llm.provider_name()}
+    # Report what was actually used, not merely what is configured.
+    return {"questions": out, "provider": llm.provider_name() if use_llm else "lexical"}
 
 
 @app.get("/api/themes")
@@ -186,19 +200,36 @@ def themes():
 
 @app.post("/api/ask")
 async def ask(payload: dict):
-    """Free-form question across all transcripts. Always returns citations."""
+    """Free-form question across all transcripts. Always returns citations.
+
+    A question that matches no guide topic and barely overlaps the corpus still gets its closest
+    turns back, so the analyst can judge them, but the answer is flagged as not directly supported
+    and the model is not asked to write prose about it. Returning nothing would hide the near miss;
+    returning it silently would overstate the evidence.
+    """
     store.require_loaded()
     question = (payload.get("question") or "").strip()
     if not question:
         raise AppError("question must not be empty", code="EMPTY_QUESTION", status_code=422)
     if len(question) > 500:
         raise AppError("question must be 500 characters or fewer", code="QUESTION_TOO_LONG", status_code=422)
-    if payload.get("use_llm", True) is False:
-        evidence, topic = analyze.retrieve(question, store.transcripts)
-        result = llm._lexical_answer(evidence)
-        return {"question": question, "topic": topic, **result}
+
     evidence, topic = analyze.retrieve(question, store.transcripts)
-    return {"question": question, "topic": topic, **llm.answer_question(question, evidence)}
+    sufficient = topic is not None or analyze.match_strength(question, store.segments()) >= 2
+
+    if payload.get("use_llm", True) is False or not sufficient:
+        return {
+            "question": question,
+            "topic": topic,
+            "sufficient": sufficient,
+            **llm.verbatim_answer(evidence, sufficient=sufficient),
+        }
+    return {
+        "question": question,
+        "topic": topic,
+        "sufficient": sufficient,
+        **llm.answer_question(question, evidence),
+    }
 
 
 @app.get("/api/segments/{segment_id:path}")

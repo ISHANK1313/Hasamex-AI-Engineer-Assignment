@@ -15,10 +15,32 @@ import logging
 import os
 import re
 import time
+from pathlib import Path
 
 import httpx
 
 log = logging.getLogger(__name__)
+
+ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+
+
+def _load_env_file(path: Path = ENV_FILE) -> None:
+    """Read .env so plain `uvicorn app.main:app` picks up the key, without the --env-file flag.
+
+    Stdlib only, deliberately not python-dotenv. A real environment variable always wins, so shell
+    overrides and CI runs behave normally; a missing or empty file simply means verbatim mode.
+    """
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = (part.strip() for part in line.split("=", 1))
+        os.environ.setdefault(key, value.strip().strip("\"'"))
+
+
+_load_env_file()
 
 DEFAULT_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
 DEFAULT_MODEL = "gemini-2.0-flash"
@@ -145,12 +167,12 @@ def answer_question(question: str, evidence: list[dict]) -> dict:
     """Grounded answer for a free-form question. Always returns citations; prose only if allowed."""
     from app.analyze import evidence_pack  # local import: analyze has no dependency on llm
 
-    lexical = _lexical_answer(evidence)
     if not evidence:
-        return {"answer": "The transcripts do not contain evidence for that question.", "provider": "lexical", "citations": []}
+        return verbatim_answer([], sufficient=False)
     if not available():
-        return lexical
+        return verbatim_answer(evidence)
 
+    lexical = verbatim_answer(evidence)
     pack = evidence_pack(evidence)
     try:
         raw = _post(
@@ -269,12 +291,34 @@ def _citations(evidence: list[dict]) -> list[dict]:
     ]
 
 
-def _lexical_answer(evidence: list[dict]) -> dict:
-    """No model: read the evidence back verbatim, still fully cited. Never empty and never wrong."""
+def verbatim_answer(evidence: list[dict], sufficient: bool = True) -> dict:
+    """No model: read the evidence back verbatim, still fully cited.
+
+    This is the default path with no key, and the fallback whenever the model is unavailable or
+    cites something it was not given. It cannot be wrong, because it contains no generated text.
+
+    When nothing relevant was found it says so plainly instead of returning an empty box, and when
+    the evidence is only a weak match it labels it as such rather than passing it off as an answer.
+    """
+    if not evidence:
+        return {
+            "answer": "The transcripts do not contain evidence for that question.",
+            "provider": "lexical",
+            "citations": [],
+            "sufficient": False,
+        }
+    if not sufficient:
+        return {
+            "answer": "No passage in the transcripts directly addresses that question. The closest related turns are shown below.",
+            "provider": "lexical",
+            "citations": _citations(evidence),
+            "sufficient": False,
+        }
     return {
         "answer": " ".join(f"[{s['timestamp']}, {s['speaker']}] {s['text']}" for s in evidence),
         "provider": "lexical",
         "citations": _citations(evidence),
+        "sufficient": True,
     }
 
 

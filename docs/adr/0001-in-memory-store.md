@@ -4,7 +4,8 @@
 
 ## Context
 
-`docs/07-Database-Schema.md` specifies nine SQLite tables plus an FTS5 index. The corpus that actually
+`docs/07-Database-Schema.md` (a local working note, not shipped in this repo) specifies nine SQLite
+tables plus an FTS5 index. The corpus that actually
 ships is three transcripts, roughly 42 turns and under 5 KB of text, all loaded from disk at startup.
 The case asks for a "simple app" and warns that a bloated one is a red flag.
 

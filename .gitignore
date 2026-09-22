@@ -27,3 +27,29 @@ run.err.log
 # Agent tooling state (not part of the submission)
 .zcode/
 .mimosa/
+
+# Internal planning docs: kept on disk, not part of the submitted repo
+.zcode/
+.mimosa/
+Files/
+
+# Redundant local files (superseded by INSTRUCTIONS.md)
+RUN-LOCALLY.md
+
+# Documentation files (per user request)
+docs/01-PRD.md
+docs/02-TRD.md
+docs/03-Architecture.md
+docs/04-High-Level-Diagram.md
+docs/05-Low-Level-Diagram.md
+docs/06-Request-Flow.md
+docs/07-Database-Schema.md
+docs/07-Memory.md
+docs/08-Phases.md
+docs/09-Scratchpad.md
+docs/10-Reference.md
+docs/11-Checklist.md
+docs/12-Fast-Lookup.md
+docs/13-Demo-Script.md
+docs/14-Submission-Plan.md
+docs/15-Run-Guide.md

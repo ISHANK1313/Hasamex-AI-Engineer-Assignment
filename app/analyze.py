@@ -503,6 +503,17 @@ def lexical_search(question: str, segments: list[dict], k: int = 4) -> list[dict
     return [s for _, s in scored[:k]]
 
 
+def match_strength(question: str, segments: list[dict]) -> int:
+    """How many of the question's own terms appear anywhere in the corpus.
+
+    Decides whether an answer is directly supported. A question about something these calls never
+    discussed must not be dressed up as if they had answered it.
+    """
+    q = _tokens(question)
+    corpus = {w for s in segments if s["is_expert"] for w in _tokens(s["text"])}
+    return sum(1 for w in q if any(_overlap(w, x) for x in corpus))
+
+
 def retrieve(question: str, transcripts: list[dict], k: int = 4) -> tuple[list[dict], str | None]:
     """Evidence for a question. Topic-routed through the turn pairs when it matches the guide.
 
