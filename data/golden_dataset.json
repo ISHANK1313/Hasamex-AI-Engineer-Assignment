@@ -1,0 +1,71 @@
+{
+  "_comment": "Hand-verified expected outputs, derived only from the transcript text. Used by tests/test_analyze.py. Quote 'contains' values are substrings that MUST appear in the extracted (verbatim) quote.",
+  "guide": [
+    { "id": 1, "topic": "adoption", "question": "How would you describe current adoption of robotic surgery in your market?" },
+    { "id": 2, "topic": "barriers", "question": "What are the main barriers to adoption?" },
+    { "id": 3, "topic": "cost_roi", "question": "How important are hospital budgets and ROI in purchasing decisions?" },
+    { "id": 4, "topic": "training_outcomes", "question": "How important are surgeon training and clinical outcomes?" },
+    { "id": 5, "topic": "growth", "question": "What adoption trend do you expect over the next 3-5 years?" },
+    { "id": 6, "topic": "timeline", "question": "What is the typical hospital decision-making timeline for purchasing a new robotic system?" }
+  ],
+  "answers": {
+    "1": {
+      "France": { "timestamp": "00:18", "contains": "concentrated in larger academic hospitals" },
+      "Germany": { "timestamp": "00:16", "contains": "adoption is quite uneven" },
+      "United Kingdom": { "timestamp": "00:14", "contains": "access still varies significantly by hospital" }
+    },
+    "2": {
+      "France": { "timestamp": "01:20", "contains": "capital budget approval" },
+      "Germany": { "timestamp": "01:10", "contains": "Cost is the first barrier" },
+      "United Kingdom": { "timestamp": "01:05", "contains": "training capacity is just as important" }
+    },
+    "3": {
+      "France": { "timestamp": "02:18", "contains": "whether the system will actually pay for itself" },
+      "Germany": { "timestamp": "02:08", "contains": "the economic case decides whether it gets approved" },
+      "United Kingdom": { "timestamp": "02:07", "contains": "not always purely financial" }
+    },
+    "4": {
+      "France": { "timestamp": "03:10", "contains": "Hospitals want several surgeons trained" },
+      "Germany": { "timestamp": "03:05", "contains": "Very important operationally" },
+      "United Kingdom": { "timestamp": "01:05", "contains": "if you cannot train enough surgeons and theatre staff" }
+    },
+    "5": {
+      "France": { "timestamp": "05:07", "contains": "15 to 20 percent more procedures annually" },
+      "Germany": { "timestamp": "05:08", "contains": "high single digits or low double digits" },
+      "United Kingdom": { "timestamp": "04:06", "contains": "above 15 percent annually in some areas" }
+    },
+    "6": {
+      "France": { "timestamp": "06:08", "contains": "Six to twelve months is realistic" },
+      "Germany": { "timestamp": "06:05", "contains": "Nine to eighteen months is common" },
+      "United Kingdom": { "timestamp": "05:04", "contains": "Around six to nine months can happen" }
+    }
+  },
+  "segment_counts": { "France": 14, "Germany": 14, "United Kingdom": 14 },
+  "expert_segment_counts": { "France": 7, "Germany": 7, "United Kingdom": 7 },
+  "themes": [
+    { "topic": "adoption", "label_contains": "growing", "experts": ["France", "Germany", "United Kingdom"] },
+    { "topic": "barriers", "label_contains": "barrier", "experts": ["France", "Germany", "United Kingdom"] },
+    { "topic": "cost_roi", "label_contains": "ROI", "experts": ["France", "Germany", "United Kingdom"] },
+    { "topic": "training_outcomes", "label_contains": "raining", "experts": ["France", "Germany", "United Kingdom"] },
+    { "topic": "growth", "label_contains": "rowth", "experts": ["France", "Germany", "United Kingdom"] },
+    { "topic": "timeline", "label_contains": "imeline", "experts": ["France", "Germany", "United Kingdom"] }
+  ],
+  "disagreements": [
+    {
+      "topic": "growth",
+      "sides": { "France": "15 to 20 percent", "Germany": "high single digits or low double digits" }
+    },
+    {
+      "topic": "cost_roi",
+      "sides": { "United Kingdom": "I would not say finance alone decides", "France": "Very important" }
+    },
+    {
+      "topic": "barriers",
+      "sides": { "United Kingdom": "training capacity is just as important", "France": "capital budget approval" }
+    },
+    {
+      "topic": "timeline",
+      "sides": { "Germany": "Nine to eighteen months", "France": "Six to twelve months" }
+    }
+  ]
+}
