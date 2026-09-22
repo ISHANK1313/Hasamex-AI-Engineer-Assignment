@@ -1,0 +1,29 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local run artifacts
+data.db
+*.webm
+docs/evidence/*.png
+run.log
+run.err.log
+
+# Agent tooling state (not part of the submission)
+.zcode/
+.mimosa/
