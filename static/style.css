@@ -1,0 +1,152 @@
+/* Minimal, readable styling: one accent colour, CSS custom properties, light and dark from the
+   same rules. No framework and no build step. */
+
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --line: #dfe3e8;
+  --ink: #1b1f24;
+  --muted: #5b6470;
+  --accent: #1f5fa8;
+  --accent-soft: #e8f0fa;
+  --warn: #8a5a00;
+  --error: #a3242a;
+  --ok: #1c6b45;
+  --radius: 10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14161a;
+    --surface: #1c1f24;
+    --line: #2e343c;
+    --ink: #e8eaed;
+    --muted: #a3acb8;
+    --accent: #7fb2ec;
+    --accent-soft: #1d2b3d;
+    --warn: #e0b055;
+    --error: #f08b8f;
+    --ok: #6fcf9a;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 20px 18px 60px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1 { font-size: 22px; margin: 0 0 4px; }
+h2 { font-size: 18px; margin: 28px 0 10px; }
+h3 { font-size: 16px; margin: 0 0 4px; }
+h4 { font-size: 14px; margin: 0 0 2px; }
+a { color: var(--accent); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.top {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: space-between; align-items: flex-start;
+}
+.sub, .role, .hint, .note { color: var(--muted); font-size: 13px; margin: 0 0 6px; }
+.status { color: var(--muted); font-size: 13px; margin: 0; }
+
+.banner {
+  margin: 14px 0 0; padding: 10px 12px;
+  border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: var(--radius); background: var(--surface);
+}
+.banner.warn { border-left-color: var(--warn); color: var(--warn); }
+.banner.error { border-left-color: var(--error); color: var(--error); }
+.banner.ok { border-left-color: var(--ok); color: var(--ok); }
+
+.controls {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: space-between; align-items: center;
+  margin: 16px 0 10px;
+}
+.corpus, .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.upload { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+input[type=text], input[type=search], input[type=file] {
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); font: inherit;
+}
+input[type=search], input[type=text] { min-width: 240px; }
+
+button {
+  padding: 8px 12px; border: 1px solid transparent; border-radius: 8px;
+  background: var(--accent); color: #fff; font: inherit; cursor: pointer;
+}
+button.ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+button.link {
+  background: none; border: none; color: var(--accent);
+  padding: 2px 4px; text-decoration: underline; font-size: 13px;
+}
+button:disabled { opacity: .6; cursor: progress; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid var(--line); }
+.tabs [role=tab] {
+  background: none; border: none; border-bottom: 3px solid transparent;
+  color: var(--muted); padding: 10px 12px; font-weight: 600;
+}
+.tabs [role=tab][aria-selected=true] { color: var(--ink); border-bottom-color: var(--accent); }
+
+.toolbar { display: flex; gap: 8px; align-items: center; margin: 16px 0; }
+main section[role=tabpanel]:focus { outline: none; }
+
+.card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 14px 16px; margin: 0 0 14px;
+}
+.card.dis { border-left: 4px solid var(--accent); }
+.card > header { margin-bottom: 10px; }
+.q { margin: 2px 0 6px; color: var(--muted); }
+.summary { margin: 6px 0 0; }
+.reason { margin: 4px 0 0; color: var(--accent); font-size: 13px; }
+.answer { margin: 8px 0 0; }
+
+.grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.expert { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.expert.muted { opacity: .75; }
+.figures { display: grid; gap: 10px; }
+.quote { margin: 0; }
+blockquote {
+  margin: 0; padding: 8px 10px; border-left: 3px solid var(--accent);
+  background: var(--accent-soft); border-radius: 0 8px 8px 0;
+}
+figcaption { margin-top: 6px; }
+.source {
+  margin: 8px 0 0; padding: 8px 10px; overflow-x: auto; white-space: pre-wrap;
+  background: var(--bg); border: 1px dashed var(--line); border-radius: 8px;
+  font-size: 13px; color: var(--muted);
+}
+.chip {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid var(--line); font-size: 12px; background: var(--bg);
+}
+.chip.soft { color: var(--muted); }
+.chip.model { border-color: var(--accent); color: var(--accent); }
+.empty { color: var(--muted); font-style: italic; }
+
+footer {
+  margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--line);
+  color: var(--muted); font-size: 13px;
+}
+
+@media (max-width: 560px) {
+  /* min-width:100% on the input made its row wider than the viewport: flex rows need to wrap and the
+     input needs to be allowed to shrink. */
+  .toolbar, .controls, .upload { flex-wrap: wrap; }
+  input[type=search], input[type=text] { flex: 1 1 100%; width: 100%; min-width: 0; }
+  .controls { align-items: flex-start; }
+  .chip { max-width: 100%; overflow-wrap: anywhere; }
+}

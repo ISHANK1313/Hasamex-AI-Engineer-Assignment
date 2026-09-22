@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expert-Call Transcript Analyzer</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>Expert-Call Transcript Analyzer</h1>
+    <p class="sub">European Robotic Surgery. Every answer is a verbatim quote with the timestamp it came from.</p>
+  </div>
+  <p class="status" id="status" aria-live="polite">loading transcripts</p>
+</header>
+
+<p id="banner" class="banner" role="alert" hidden></p>
+
+<section class="controls">
+  <div id="corpus" class="corpus"></div>
+  <div class="upload">
+    <label class="sr-only" for="file">Add a transcript file</label>
+    <input id="file" type="file" accept=".txt,text/plain">
+    <button id="add" type="button">Add transcript</button>
+    <button id="reload" type="button" class="ghost">Reload samples</button>
+  </div>
+</section>
+
+<nav class="tabs" role="tablist" aria-label="Views">
+  <button role="tab" id="tab-guide" aria-controls="panel-guide" aria-selected="true">Guide answers</button>
+  <button role="tab" id="tab-themes" aria-controls="panel-themes" aria-selected="false">Themes and disagreements</button>
+  <button role="tab" id="tab-ask" aria-controls="panel-ask" aria-selected="false">Ask across transcripts</button>
+</nav>
+
+<main>
+  <section id="panel-guide" role="tabpanel" aria-labelledby="tab-guide" tabindex="0">
+    <div class="toolbar">
+      <label for="filter">Filter questions</label>
+      <input id="filter" type="search" placeholder="training, ROI, timeline">
+    </div>
+    <div id="guide"></div>
+  </section>
+
+  <section id="panel-themes" role="tabpanel" aria-labelledby="tab-themes" tabindex="0" hidden>
+    <div id="themes"></div>
+  </section>
+
+  <section id="panel-ask" role="tabpanel" aria-labelledby="tab-ask" tabindex="0" hidden>
+    <form id="ask-form">
+      <label for="question">Your question</label>
+      <div class="row">
+        <input id="question" name="question" type="text" maxlength="500" required
+               placeholder="How long does purchasing a robotic system take?">
+        <button type="submit">Ask</button>
+      </div>
+      <p class="hint">Try: main barrier, growth outlook, ROI, purchase timeline.</p>
+    </form>
+    <div id="answer" aria-live="polite"></div>
+  </section>
+</main>
+
+<footer>
+  Quotes are extracted by code as exact substrings and timestamps are read from the source file, so
+  nothing on this page is generated text. An optional model may only write prose around the evidence
+  it is given, and it is discarded if it cites a source that is not in that evidence.
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
